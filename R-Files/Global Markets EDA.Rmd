@@ -1,0 +1,173 @@
+---
+title: "Global Markets EDA"
+author: "Group 9"
+date: "12/8/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+
+
+#United States
+dowJones <- read_csv("Datasets/Dow Jones.csv")
+SP500 <- read_csv("Datasets/S&P 500.csv")
+NASDAQ <- read_csv("Datasets/NASDAQ.csv")
+
+#Europe
+DAX <- read_csv("Datasets/Germany DAX.csv")
+CAC40 <- read_csv("Datasets/Paris CAC 40.csv")
+FTSE100 <- read_csv("Datasets/FTSE 100.csv")
+
+#Asia
+HSI <- read_csv("Datasets/HSi.csv")
+Nikkei255 <- read_csv("Datasets/Nikkei 255.csv")
+SSE <- read_csv("Datasets/SSE.csv")
+BSE_Sensex <- read_csv("Datasets/S&P BSE Sensex.csv")
+```
+
+```{r eval = FALSE}
+
+#Importing Libraries
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+
+#United States
+dowJones <- read_csv("Datasets/Dow Jones.csv")
+SP500 <- read_csv("Datasets/S&P 500.csv")
+NASDAQ <- read_csv("Datasets/NASDAQ.csv")
+
+#Europe
+DAX <- read_csv("Datasets/Germany DAX.csv")
+CAC40 <- read_csv("Datasets/Paris CAC 40.csv")
+FTSE100 <- read_csv("Datasets/FTSE 100.csv")
+
+#Asia
+HSI <- read_csv("Datasets/HSi.csv")
+Nikkei255 <- read_csv("Datasets/Nikkei 255.csv")
+SSE <- read_csv("Datasets/SSE.csv")
+BSE_Sensex <- read_csv("Datasets/S&P BSE Sensex.csv")
+```
+
+```{r}
+#Example of the Structure of the Datasets
+dowJones
+
+#Dow Jones EDA
+dowJones$Dates <- mdy(dowJones$Dates)
+dowJones$Index <- as.integer(dowJones$Index)
+
+summary(dowJones$Index)
+
+dowJones.t <- tibble(dowJones[ , ])
+ggplot(data = dowJones, aes(x = Dates, y = Index)) + geom_line() + ggtitle("Dow Jones Index Values") + scale_x_date(date_labels = "%b %y", date_breaks = "1 months") 
+
+
+
+#S&P 500 EDA
+SP500$Dates <- mdy(SP500$Dates)
+SP500$Index <- as.integer(SP500$Index)
+
+summary(SP500$Index)
+
+SP500 <- tibble(SP500[ , ])
+ggplot(data = SP500, aes(x = Dates, y = Index)) + geom_line() + ggtitle("S&P 500 Index Values") + scale_x_date(date_labels = "%b %y", date_breaks = "1 months") 
+
+
+
+#NASDAQ EDA
+NASDAQ$Dates <- mdy(NASDAQ$Dates)
+NASDAQ$Index <- as.integer(NASDAQ$Index)
+
+summary(NASDAQ$Index)
+
+NASDAQ <- tibble(NASDAQ[ , ])
+ggplot(data = NASDAQ, aes(x = Dates, y = Index)) + geom_line() + ggtitle("NASDAQ Index Values") + scale_x_date(date_labels = "%b %y", date_breaks = "1 months") 
+
+
+
+#DAX EDA
+DAX$Dates <- mdy(DAX$Dates)
+DAX$Index <- as.integer(DAX$Index)
+
+summary(DAX$Index)
+
+DAX <- tibble(DAX[ , ])
+ggplot(data = DAX, aes(x = Dates, y = Index)) + geom_line() + ggtitle("DAX Index Values") + scale_x_date(date_labels = "%b %y", date_breaks = "1 months") 
+
+
+
+#CAC 40 EDA
+CAC40$Dates <- mdy(CAC40$Dates)
+CAC40$Index <- as.integer(CAC40$Index)
+
+summary(CAC40$Index)
+
+CAC40 <- tibble(CAC40[ , ])
+ggplot(data = CAC40, aes(x = Dates, y = Index)) + geom_line() + ggtitle("CAC 40 Index Values") + scale_x_date(date_labels = "%b %y", date_breaks = "1 months") 
+
+
+
+#FTSE 100 EDA
+FTSE100$Dates <- mdy(FTSE100$Dates)
+FTSE100$Index <- as.integer(FTSE100$Index)
+
+summary(FTSE100$Index)
+
+FTSE100 <- tibble(FTSE100[ , ])
+ggplot(data = FTSE100, aes(x = Dates, y = Index)) + geom_line() + ggtitle("FTSE 100 Index Values") + scale_x_date(date_labels = "%b %y", date_breaks = "1 months") 
+
+
+
+#HSI EDA
+HSI$Dates <- mdy(HSI$Dates)
+HSI$Index <- as.integer(HSI$Index)
+
+summary(HSI$Index)
+
+HSI <- tibble(HSI[ , ])
+ggplot(data = HSI, aes(x = Dates, y = Index)) + geom_line() + ggtitle("HSI Index Values") + scale_x_date(date_labels = "%b %y", date_breaks = "1 months") 
+
+
+
+#Nikkei255 EDA
+Nikkei255$Dates <- mdy(Nikkei255$Dates)
+Nikkei255$Index <- as.integer(Nikkei255$Index)
+
+summary(Nikkei255$Index)
+
+Nikkei255 <- tibble(Nikkei255[ , ])
+ggplot(data = Nikkei255, aes(x = Dates, y = Index)) + geom_line() + ggtitle("Nikkei255 Index Values") + scale_x_date(date_labels = "%b %y", date_breaks = "1 months") 
+
+
+
+
+#SSE EDA
+SSE$Dates <- mdy(SSE$Dates)
+SSE$Index <- as.integer(SSE$Index)
+
+summary(SSE$Index)
+
+SSE <- tibble(SSE[ , ])
+ggplot(data = SSE, aes(x = Dates, y = Index)) + geom_line() + ggtitle("SSE Index Values") + scale_x_date(date_labels = "%b %y", date_breaks = "1 months") 
+
+
+
+
+#BSE Sensex EDA
+BSE_Sensex$Dates <- mdy(BSE_Sensex$Dates)
+BSE_Sensex$Index <- as.integer(BSE_Sensex$Index)
+
+summary(BSE_Sensex$Index)
+
+BSE_Sensex <- tibble(BSE_Sensex[ , ])
+ggplot(data = BSE_Sensex, aes(x = Dates, y = Index)) + geom_line() + ggtitle("BSE Sensex Index Values") + scale_x_date(date_labels = "%b %y", date_breaks = "1 months")
+
+```
+
+

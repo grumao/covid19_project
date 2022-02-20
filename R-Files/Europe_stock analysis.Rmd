@@ -1,0 +1,342 @@
+---
+title: "Europe _ Stock Analysis"
+author: "Group 9"
+date: "12/15/2020"
+output: pdf_document
+---
+```{r,comment="",message=FALSE}
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+```
+
+1. Germany DAX
+```{r,comment="",message=FALSE}
+GermanyDAX <- read_csv("Germany DAX.csv")
+GermanyDAX
+GermanyDAX$Dates <- mdy(GermanyDAX$Dates)
+GermanyDAX$Index <- as.integer(GermanyDAX$Index)
+summary(GermanyDAX$Index)
+```
+
+```{r,comment="",message=FALSE}
+GermanyDAX.t <- tibble(GermanyDAX[ , ])
+ggplot(data = GermanyDAX, aes(x = Dates, y = Index)) +
+  geom_line() + ggtitle("Germany DAX Index Values") +
+  scale_x_date(date_labels = "%b %y", date_breaks = "1 months") 
+```
+
+```{r,comment="",message=FALSE}
+DAX<-read.csv("Germany DAX.csv")
+colnames(DAX)<-c("Dates","Index")
+glimpse(DAX)
+DAX$Dates<-mdy(DAX$Dates)
+DAX$quarter<-quarter(DAX$Dates)
+DAX$month<-month(DAX$Dates)
+summary(DAX)
+c=nrow(DAX)
+DAX$daily.stockreturn<-c()
+DAX$daily.stockreturn[1]=NA
+for(i  in 2:c) {
+  DAX$daily.stockreturn[i]<-(DAX$Index[i]-DAX$Index[i-1])/DAX$Index[i-1]*100
+}
+summary(DAX)
+```
+Boxplot
+```{r,comment="",message=FALSE}
+boxplot(DAX$daily.stockreturn,ylab="Percentage of Daily Stock Return", main = "GermanyDAX", col = "green4")
+boxplot(DAX$daily.stockreturn~DAX$month,ylab="Percentage of Daily Stock Return", main = "GermanyDAX", col = "tan3")
+boxplot(DAX$daily.stockreturn~DAX$quarter,ylab="Percentage of Daily Stock Return", main = "GermanyDAX", col = "tan3")
+```
+
+Remove outliers
+```{r,comment="",message=FALSE}
+q<-quantile(DAX$daily.stockreturn[-1])
+IQR<-q[4]-q[2]
+IQR
+inner.fence<-q[2]-1.5*IQR
+outer.fence<-q[4]+1.5*IQR
+remove<-which(DAX$daily.stockreturn<inner.fence | DAX$daily.stockreturn>outer.fence)
+DAX<-DAX[-remove,]
+remove2<-which(is.na(DAX$daily.stockreturn))
+DAX<-DAX[-remove2,]
+```
+
+Visualization:
+```{r,comment="",message=FALSE}
+boxplot(DAX$daily.stockreturn,ylab="Percentage of Daily Stock Return", main = "GermanyDAX", col = "green4")
+#histogram
+h<-hist(DAX$daily.stockreturn,xlab="Percentage of Daily Stock Return", main = "GermanyDAX", col = "pink")
+xfit = seq(min(DAX$daily.stockreturn), max(DAX$daily.stockreturn), length=20)
+yfit = dnorm(xfit, mean=mean(DAX$daily.stockreturn),sd=sd(DAX$daily.stockreturn))
+yfit <- yfit*diff(h$mids[1:2])*length(DAX$daily.stockreturn)
+lines(xfit,yfit,col="blue",lwd=2)
+#qqplot
+qqnorm(DAX$daily.stockreturn,cex=1,pch=15,col="red", ylab = "Percentage of Daily Stock Return");
+qqline(DAX$daily.stockreturn, col="plum",lwd=2)
+```
+Perform T-test:(one-tailed)
+Hypothesis:
+ H0: No significant growth is observed in Germany DAX index i.e. MU=0
+ H1: Significant growth is observed in Germany DAX i.e. Mu>0 
+```{r,comment="",message=FALSE}
+t.test(DAX$daily.stockreturn,mu=0, alternative = "greater")
+```
+since p-value < alpha. We reject the null hypothesis. Thus,
+Significant growth is observed in Germany DAX
+
+quarter wise analysis:
+```{r,comment="",message=FALSE}
+select<-which(DAX$quarter==1)
+DAX1<-DAX[select,]
+summary(DAX1)
+t.test(DAX1$daily.stockreturn, mu=0, alternative = "greater")
+```
+Since p-value>alpha, we do not reject the null hypothesis.
+thus, no significant growth is observed in the 1st Quarter
+```{r,comment="",message=FALSE}
+select<-which(DAX$quarter==2)
+DAX2<-DAX[select,]
+summary(DAX2)
+t.test(DAX2$daily.stockreturn, mu=0, alternative = "greater")
+```
+Since p-value<alpha, we reject the null hypothesis.
+thus,significant growth is observed in the 2nd Quarter
+```{r,comment="",message=FALSE}
+select<-which(DAX$quarter==3)
+DAX3<-DAX[select,]
+summary(DAX3)
+t.test(DAX3$daily.stockreturn, mu=0, alternative = "greater")
+```
+Since p-value>alpha, we do not reject the null hypothesis.
+thus, no significant growth is observed in the 3rd Quarter
+```{r,comment="",message=FALSE}
+select<-which(DAX$Dates>'2020-10-01')
+DAX4<-DAX[select,]
+summary(DAX4)
+t.test(DAX4$daily.stockreturn, mu=0, alternative = "greater")
+```
+Since 0.05<p-value<0.1, we do not reject the null hypothesis.
+thus, no significant growth is observed in the 3rd Quarter
+but since p-value<0.1 we can its slightly more significant than the other quarters.
+
+
+2. Paris CAC 40
+```{r,comment="",message=FALSE}
+ParisCAC40<- read_csv("Paris CAC 40.csv")
+ParisCAC40
+ParisCAC40$Dates <- mdy(ParisCAC40$Dates)
+ParisCAC40$Index <- as.integer(ParisCAC40$Index)
+summary(ParisCAC40$Index)
+```
+
+```{r,comment="",message=FALSE}
+ParisCAC40.t <- tibble(ParisCAC40[ , ])
+ggplot(data = ParisCAC40, aes(x = Dates, y = Index)) +
+  geom_line() + ggtitle("Paris CAC 40 Index Values") +
+  scale_x_date(date_labels = "%b %y", date_breaks = "1 months") 
+
+```
+
+```{r,comment="",message=FALSE}
+CAC<-read.csv("Paris CAC 40.csv")
+colnames(CAC)<-c("Dates","Index")
+glimpse(CAC)
+CAC$Dates<-mdy(CAC$Dates)
+CAC$quarter<-quarter(CAC$Dates)
+CAC$month<-month(CAC$Dates)
+summary(CAC)
+c=nrow(CAC)
+CAC$daily.stockreturn<-c()
+CAC$daily.stockreturn[1]=NA
+for(i  in 2:c) {
+  CAC$daily.stockreturn[i]<-(CAC$Index[i]-CAC$Index[i-1])/CAC$Index[i-1]*100
+}
+summary(CAC)
+```
+
+Boxplot
+```{r,comment="",message=FALSE}
+boxplot(CAC$daily.stockreturn,ylab="Percentage of Daily Stock Return", main = "ParisCAC40", col = "green4")
+boxplot(CAC$daily.stockreturn~CAC$month,ylab="Percentage of Daily Stock Return", main = "ParisCAC40", col = "tan3")
+boxplot(CAC$daily.stockreturn~CAC$quarter,ylab="Percentage of Daily Stock Return", main = "ParisCAC40", col = "tan3")
+```
+remove outliers
+```{r,comment="",message=FALSE}
+q<-quantile(CAC$daily.stockreturn[-1])
+IQR<-q[4]-q[2]
+IQR
+inner.fence<-q[2]-1.5*IQR
+outer.fence<-q[4]+1.5*IQR
+remove<-which(CAC$daily.stockreturn<inner.fence | CAC$daily.stockreturn>outer.fence)
+CAC<-CAC[-remove,]
+remove2<-which(is.na(CAC$daily.stockreturn))
+CAC<-CAC[-remove2,]
+```
+visualization:
+```{r,comment="",message=FALSE}
+boxplot(CAC$daily.stockreturn,ylab="Percentage of Daily Stock Return", main = "ParisCAC40", col = "green4")
+#histogram
+h<-hist(CAC$daily.stockreturn,xlab="Percentage of Daily Stock Return", main = "ParisCAC40", col = "pink")
+xfit = seq(min(CAC$daily.stockreturn), max(CAC$daily.stockreturn), length=20)
+yfit = dnorm(xfit, mean=mean(CAC$daily.stockreturn),sd=sd(CAC$daily.stockreturn))
+yfit <- yfit*diff(h$mids[1:2])*length(CAC$daily.stockreturn)
+lines(xfit,yfit,col="blue",lwd=2)
+#qqplot
+qqnorm(CAC$daily.stockreturn,cex=1,pch=15,col="red", ylab = "Percentage of Daily Stock Return");
+qqline(CAC$daily.stockreturn, col="plum",lwd=2)
+```
+Perform T-test:(one-tailed)
+Hypothesis:
+ H0: No significant growth is observed in Paris CAC 40 index i.e. MU=0
+ H1: Significant growth is observed in Paris CAC 40 i.e. Mu>0 
+```{r,comment="",message=FALSE}
+t.test(CAC$daily.stockreturn,mu=0, alternative = "greater")
+```
+Since p-value > alpha. We do not reject the null hypothesis. Thus,
+Thus no Significant growth is observed in Paris CAC 40
+
+Quarter wise analysis:
+```{r,comment="",message=FALSE}
+select<-which(CAC$quarter==1)
+CAC1<-CAC[select,]
+summary(CAC1)
+t.test(CAC1$daily.stockreturn, mu=0, alternative = "greater")
+```
+Since p-value>alpha, we do not reject the null hypothesis.
+thus, no significant growth is observed in the 1st Quarter
+```{r,comment="",message=FALSE}
+select<-which(CAC$quarter==2)
+CAC2<-CAC[select,]
+summary(CAC2)
+t.test(CAC2$daily.stockreturn, mu=0, alternative = "greater")
+```
+Since p-value>alpha, we do not reject the null hypothesis.
+thus, no significant growth is observed in the 2nd Quarter
+```{r,comment="",message=FALSE}
+select<-which(CAC$quarter==3)
+CAC3<-CAC[select,]
+summary(CAC3)
+t.test(CAC3$daily.stockreturn, mu=0, alternative = "greater")
+```
+Since p-value>alpha, we do not reject the null hypothesis.
+thus, no significant growth is observed in the 3rd Quarter
+```{r,comment="",message=FALSE}
+select<-which(CAC$Dates>'2020-10-01')
+CAC4<-CAC[select,]
+summary(CAC4)
+t.test(CAC4$daily.stockreturn, mu=0, alternative = "greater")
+```
+Since p-value<0.05=alpha, we reject the null hypothesis.
+thus,significant growth is observed in the 3rd Quarter
+
+
+3. FTSE 100
+```{r,comment="",message=FALSE}
+FTSE100 <- read_csv("FTSE 100.csv")
+FTSE100
+FTSE100$Dates <- mdy(FTSE100$Dates)
+FTSE100$Index <- as.integer(FTSE100$Index)
+summary(FTSE100$Index)
+```
+
+```{r,comment="",message=FALSE}
+FTSE100.t <- tibble(FTSE100[ , ])
+ggplot(data = FTSE100, aes(x = Dates, y = Index)) +
+  geom_line() + ggtitle("FTSE 100 Index Values") +
+  scale_x_date(date_labels = "%b %y", date_breaks = "1 months") 
+```
+
+```{r,comment="",message=FALSE}
+FTSE<-read.csv("FTSE 100.csv")
+colnames(FTSE)<-c("Dates","Index")
+glimpse(FTSE)
+
+FTSE$Dates<-mdy(FTSE$Dates)
+FTSE$quarter<-quarter(FTSE$Dates)
+FTSE$month<-month(FTSE$Dates)
+
+summary(FTSE)
+c=nrow(FTSE)
+FTSE$daily.stockreturn<-c()
+FTSE$daily.stockreturn[1]=NA
+for(i  in 2:c) {
+  FTSE$daily.stockreturn[i]<-(FTSE$Index[i]-FTSE$Index[i-1])/FTSE$Index[i-1]*100
+}
+summary(FTSE)
+```
+
+Boxplot
+```{r,comment="",message=FALSE}
+boxplot(FTSE$daily.stockreturn,ylab="Percentage of Daily Stock Return", main = "FTSE100", col = "green4")
+boxplot(FTSE$daily.stockreturn~FTSE$month,ylab="Percentage of Daily Stock Return", main = "FTSE100", col = "tan3")
+boxplot(FTSE$daily.stockreturn~FTSE$quarter,ylab="Percentage of Daily Stock Return", main = "FTSE100", col = "tan3")
+```
+remove outliers
+```{r,comment="",message=FALSE}
+q<-quantile(FTSE$daily.stockreturn[-1])
+IQR<-q[4]-q[2]
+IQR
+inner.fence<-q[2]-1.5*IQR
+outer.fence<-q[4]+1.5*IQR
+remove<-which(FTSE$daily.stockreturn<inner.fence | FTSE$daily.stockreturn>outer.fence)
+FTSE<-FTSE[-remove,]
+remove2<-which(is.na(FTSE$daily.stockreturn))
+FTSE<-FTSE[-remove2,]
+```
+visualization:
+```{r,comment="",message=FALSE}
+boxplot(FTSE$daily.stockreturn,ylab="Percentage of Daily Stock Return", main = "FTSE100", col = "green4")
+#histogram
+h<-hist(FTSE$daily.stockreturn,xlab="Percentage of Daily Stock Return", main = "FTSE100", col = "pink")
+xfit = seq(min(FTSE$daily.stockreturn), max(FTSE$daily.stockreturn), length=20)
+yfit = dnorm(xfit, mean=mean(FTSE$daily.stockreturn),sd=sd(FTSE$daily.stockreturn))
+yfit <- yfit*diff(h$mids[1:2])*length(FTSE$daily.stockreturn)
+lines(xfit,yfit,col="blue",lwd=2)
+#qqplot
+qqnorm(FTSE$daily.stockreturn,cex=1,pch=15,col="red", ylab = "Percentage of Daily Stock Return");
+qqline(FTSE$daily.stockreturn, col="plum",lwd=2)
+```
+Perform T-test:(one-tailed)
+Hypothesis:
+ H0: No significant growth is observed in FTSE 100 index i.e. MU=0
+ H1: Significant growth is observed in FTSE 100 i.e. Mu>0 
+```{r,comment="",message=FALSE}
+t.test(FTSE$daily.stockreturn,mu=0, alternative = "greater")
+```
+Since p-value > alpha. We do not reject the null hypothesis. Thus,
+No significant growth is observed in FTSE 100
+
+Quarter wise analysis:
+```{r,comment="",message=FALSE}
+select<-which(FTSE$quarter==1)
+FTSE1<-FTSE[select,]
+summary(FTSE1)
+t.test(FTSE1$daily.stockreturn, mu=0, alternative = "greater")
+```
+Since p-value>alpha, we do not reject the null hypothesis.
+thus, no significant growth is observed in the 1st Quarter
+```{r,comment="",message=FALSE}
+select<-which(FTSE$quarter==2)
+FTSE2<-FTSE[select,]
+summary(FTSE2)
+t.test(FTSE2$daily.stockreturn, mu=0, alternative = "greater")
+```
+Since p-value>alpha, we do not reject the null hypothesis.
+thus, no significant growth is observed in the 2nd Quarter
+```{r,comment="",message=FALSE}
+select<-which(FTSE$quarter==3)
+FTSE3<-FTSE[select,]
+summary(FTSE3)
+t.test(FTSE3$daily.stockreturn, mu=0, alternative = "greater")
+```
+Since p-value>alpha, we do not reject the null hypothesis.
+thus, no significant growth is observed in the 3rd Quarter
+```{r,comment="",message=FALSE}
+select<-which(FTSE$Dates>'2020-10-01')
+FTSE4<-FTSE[select,]
+summary(FTSE4)
+t.test(FTSE4$daily.stockreturn, mu=0, alternative = "greater")
+```
+since p-value>0.05, we do not reject the null hypothesis.
+thus, no significant growth is observed in the 4th Quarter

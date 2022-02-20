@@ -1,0 +1,46 @@
+---
+title: "Statewide Analysis"
+author: "Group 9"
+date: "12/14/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+
+covid<-read_csv("Datasets/US_Covid_Cases.csv")
+covid
+covid$Date<-as.Date(covid$Date, "%m/%d/%y")
+
+
+mostRecent = covid[ which(covid$Date == '2020-12-03'),1:3]
+
+covidAnalysis <- read_csv('covidAnalysis.csv')
+
+covidAnalysis
+
+plot(covidAnalysis$infection_rate, covidAnalysis$Q2_GDP)
+
+model = lm(covidAnalysis$infection_rate~covidAnalysis$Q2_GDP)
+
+residual = resid(model)
+
+plot(covidAnalysis$infection_rate, residual); abline(0,0)
+
+cov(covidAnalysis$infection_rate, covidAnalysis$Q2_GDP)
+cov(covidAnalysis$infection_rate, covidAnalysis$Q1_GDP)
+
+cor(covidAnalysis$infection_rate, covidAnalysis$Q2_GDP)
+cor(covidAnalysis$infection_rate, covidAnalysis$Q1_GDP)
+
+pairs(covidAnalysis[ , 4:6 ])
+```
+

@@ -1,0 +1,64 @@
+---
+title: "Covid data analysis"
+author: "Group 9"
+date: "12/5/2020"
+output: pdf_document
+---
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+
+covid<-read_csv("Datasets/covid.csv")
+covid
+covid$Date<-as.Date(covid$Date, "%m/%d/%y")
+covid$Month<-month(covid$Date)
+which(is.na(covid$`Total cases`))
+which(is.na(covid$`New cases`))
+which(is.na(covid$`Total death`))
+which(is.na(covid$`New death`))
+
+glimpse(covid)
+
+Covid.19<-tibble(covid[,c(1,2,3,6,8,11,13)])
+Covid.19
+
+Covid.19$`Total cases`<-as.integer(Covid.19$`Total cases`)
+Covid.19$`New Cases`<-as.integer(Covid.19$`New Cases`)
+Covid.19$`Total death`<-as.integer(Covid.19$`Total death`)
+Covid.19$`New death`<-as.integer(Covid.19$`New death`)
+Covid.19$Month<-as.integer(Covid.19$Month)
+
+ggplot(data=Covid.19, aes(x=Date , y=`New Cases`))+geom_col()
+ggplot(data=Covid.19)+geom_histogram(aes(x=`New Cases`, col="red"))
+ggplot(data=Covid.19)+
+  geom_histogram(aes(x=`New Cases`, col="red"))+
+  coord_cartesian(ylim = c(0,750))
+
+ggplot(data=Covid.19)+
+  geom_histogram(aes(x=`New Cases`, col="red"))+
+  coord_cartesian(ylim = c(0,100))
+
+ggplot(Covid.19, aes(x=Month, y=`New Cases`, size=`New death`))+geom_point(aes(col=`New death`))
+
+subset(Covid.19 , `New Cases`<0)
+remove<-which(Covid.19$`New Cases`<0)
+Covid.19<-Covid.19[-remove,]
+
+
+ggplot(data=Covid.19)+geom_histogram(aes(x=`Total cases`, col="plum"))
+
+ggplot(data=Covid.19)+geom_histogram(aes(x=`Total cases`, col="plum"))+
+  coord_cartesian(ylim = c(0,3000))
+
+ggplot(data=Covid.19)+geom_boxplot(aes(x=state , y=`Total cases`))
+
+
+#ggplot(Covid.19, aes(x=Date, y=`New Cases`))+geom_area()
+
+highspread<-which(Covid.19$`Total cases`> 10000)
+Covid.highspread<-Covid.19[highspread,]
+unique(Covid.highspread$state)
+unique(Covid.19$state)
+```
